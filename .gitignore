@@ -1,0 +1,6 @@
+build
+*.syso
+
+config.cfg
+hosts.txt
+
