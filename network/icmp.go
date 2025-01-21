@@ -3,6 +3,7 @@ package network
 import (
 	"time"
 
+	"CyberGuardian/logger"
 	probing "github.com/prometheus-community/pro-bing"
 )
 
@@ -13,6 +14,9 @@ func ICMP(szPingCount int, szPingTimeout int, host string) bool {
 		return false
 	}
 	ping.SetPrivileged(true)
+	if szPingCount == 0 {
+		logger.ERROR("Ping count is 0 !!!!!!")
+	}
 	ping.Count = szPingCount // Set send ping count
 	ping.Timeout = time.Duration(szPingTimeout) * time.Second
 
@@ -24,5 +28,9 @@ func ICMP(szPingCount int, szPingTimeout int, host string) bool {
 
 	// Get ping statistics
 	stats := ping.Statistics()
-	return stats.PacketsRecv > 0 // Return true if packets received
+	if (stats.PacketsSent - stats.PacketsRecv) == stats.PacketsSent {
+		return false
+	} else {
+		return true
+	}
 }
