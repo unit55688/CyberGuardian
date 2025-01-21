@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 	"time"
 
@@ -14,7 +15,9 @@ import (
 
 func checkHost(szHost string, szMailConfig map[string]string, wg *sync.WaitGroup) {
 	defer wg.Done()
-	if !network.ICMP(1, szHost) {
+	szPingCount, _ := strconv.Atoi(szMailConfig["count"])
+	szPingTimeout, _ := strconv.Atoi(szMailConfig["timeout"])
+	if !network.ICMP(szPingCount, szPingTimeout, szHost) {
 		szCurrentTime := time.Now()
 		szNow := szCurrentTime.Format("2006-01-02 15:04:05")
 
@@ -36,6 +39,7 @@ func checkHost(szHost string, szMailConfig map[string]string, wg *sync.WaitGroup
 func main() {
 	szHosts := common.GetHosts("hosts.txt")
 	szMailConfig := common.GetMailConfig("config.cfg")
+	szPingRound, _ := strconv.Atoi(szMailConfig["round"])
 	for {
 		var wg sync.WaitGroup
 		for _, szHost := range szHosts {
@@ -44,7 +48,7 @@ func main() {
 		}
 		wg.Wait()
 		logger.INFO("-------------------- 分隔線 --------------------")
-		time.Sleep(30 * time.Second)
-
+		
+		time.Sleep(time.Duration(szPingRound) * time.Second)
 	}
 }

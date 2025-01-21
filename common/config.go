@@ -46,6 +46,11 @@ func GetMailConfig(szConfigFile string) map[string]string {
 		logger.Log(szConfigFile, "[Mail]")
 		logger.Log(szConfigFile, "subject = \"設備斷線告警\"")
 		logger.Log(szConfigFile, "body = \"設備無回應，請檢查網絡連接！!\"")
+		logger.Log(szConfigFile, "")
+		logger.Log(szConfigFile, "[Ping]")
+		logger.Log(szConfigFile, "round = 30")
+		logger.Log(szConfigFile, "count = 3")
+		logger.Log(szConfigFile, "timeout = 5")
 	}
 
 	szResult := map[string]string{}
@@ -54,22 +59,29 @@ func GetMailConfig(szConfigFile string) map[string]string {
 		logger.ERROR("無法讀取 config.cfg: " + err.Error())
 	}
 
-	szServer := cfg.Section("SMTP").Key("server").String()
-	szPort := cfg.Section("SMTP").Key("port").String()
-	szSender := cfg.Section("SMTP").Key("sender").String()
-	szPassword := cfg.Section("SMTP").Key("password").String()
-	szReceiver := cfg.Section("SMTP").Key("receiver").String()
+	szMailServer := cfg.Section("SMTP").Key("server").String()
+	szMailPort := cfg.Section("SMTP").Key("port").String()
+	szMailSender := cfg.Section("SMTP").Key("sender").String()
+	szMailPassword := cfg.Section("SMTP").Key("password").String()
+	szMailReceiver := cfg.Section("SMTP").Key("receiver").String()
 
-	szSubject := cfg.Section("Mail").Key("subject").String()
-	szBody := cfg.Section("Mail").Key("body").String()
+	szMailSubject := cfg.Section("Mail").Key("subject").String()
+	szMailBody := cfg.Section("Mail").Key("body").String()
 
-	szResult["server"] = szServer
-	szResult["port"] = szPort
-	szResult["sender"] = szSender
-	szResult["password"] = szPassword
-	szResult["receiver"] = szReceiver
-	szResult["subject"] = szSubject
-	szResult["body"] = szBody
+	szPingRound := cfg.Section("Ping").Key("round").String()
+	szPingCount := cfg.Section("Ping").Key("count").String()
+	szPingTimeout := cfg.Section("Ping").Key("timeout").String()
+
+	szResult["server"] = szMailServer
+	szResult["port"] = szMailPort
+	szResult["sender"] = szMailSender
+	szResult["password"] = szMailPassword
+	szResult["receiver"] = szMailReceiver
+	szResult["subject"] = szMailSubject
+	szResult["body"] = szMailBody
+	szResult["round"] = szPingRound
+	szResult["count"] = szPingCount
+	szResult["timeout"] = szPingTimeout
 
 	return szResult
 }
